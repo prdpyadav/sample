@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Tailwind Css</title>
+  </head>
+
+  <body>
+    <div>
+      <nav class="bg-red-400 p-4 flex flex-row-reverse h-15">
+        <ul class="flex space-x-20">
+          <li class="cursor-pointer hover:text-white">Home</li>
+          <li class="cursor-pointer hover:transition-all">About</li>
+          <li
+            class="cursor-pointer hover:text-white hover:underline duration-1000"
+          >
+            Contact us
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <input
+      class="placeholder:italic m-3 placeholder:text-slate-400 block bg-white w-100 border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+      placeholder="Search movie name..."
+      type="text"
+      name="search"
+      onchange="mapData()"
+    />
+
+    <div
+      id="movies"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-7overflow-hidden"
+    ></div>
+
+    <button
+      class="m-5 p-4 rounded text-white transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
+    >
+      See hover effect
+    </button>
+    <button
+      class="transition transform hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:transform-none ..."
+    >
+      Hover me
+    </button>
+  </body>
+</html>
+<script>
+  let movies_data = [];
+  const getData = async (value) => {
+    await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=a8048c88841d1947ea18a343448e4679&language=en-US&include_adult=false&query=${value}&page=1`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        movies_data = data.results;
+      });
+  };
+
+  async function mapData() {
+    await getData(search[0].value);
+    //console.log(movies_data)
+    document.querySelector("#movies").innerHTML = null;
+    movies_data.map((el) => {
+      let img = document.createElement("img");
+      //console.log(el.poster_path)
+      img.src = `${
+        el.poster_path == null
+          ? "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019"
+          : `https://image.tmdb.org/t/p/w500/${el.poster_path}`
+      }`;
+      let div = document.createElement("div");
+      div.setAttribute(
+        "class",
+        "p-4 transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-90 hover:bg-yellow-300 duration-300"
+      );
+      img.setAttribute("class", "w-50 cursor-pointer rounded");
+      div.append(img);
+      document.querySelector("#movies").append(div);
+    });
+  }
+  mapData();
+
+  function searchByQuery() {
+    //console.log(search[0].value)
+  }
+  let search = document.getElementsByName("search");
+</script>
